@@ -4,12 +4,12 @@
 #define in3 6
 #define in4 9
 //speed values
+#define zero 0
 #define one 51
 #define two 51*2
 #define three 51*3
 #define four 51*4
 #define five 51*5
-
 //sensors bins
 #define front_sen 8
 #define middle_sen 10
@@ -21,20 +21,22 @@ int curcase,read_front,read_middle,read_left,read_right;
 
 void setup() {
   //l298n pins
-  for(int i = 2;i <= 5;i++){
-    pinMode(i,1);
-    }
-  for(int i = 8;i <= 11;i++){
-    pinMode(i,0);
-  } 
-  for(int i =2;i <= 5;i++){
-  digitalWrite(i,0);
-  }
+  pinMode(in1,1);  
+  pinMode(in2,1);
+  pinMode(in3,1);
+  pinMode(in4,1);
+  //IR pins
+  pinMode(8,0);
+  pinMode(10,0);
+  pinMode(12,0);
+  pinMode(13,0);  
   Serial.begin(9600);
 }
 
 void loop() {
 read_all();
+forward();
+}
 
 //0 -> white
 //1 -> black
@@ -48,28 +50,28 @@ int read(int sensor){
   return digitalRead(sensor);
   }
 
-void stop(char speed){
+void stop(){
   move('l','s');
   move('r','s');
   }
-void backward(char speed){
-  move('l','b');
-  move('r','b');
+void backward(char speed = one){
+  move('l','b',speed);
+  move('r','b',speed);
   }
 
-void right(char speed){
-  move('r','f');
-  move('l','b');
+void right(char speed = one){
+  move('l','b',zero);
+  move('r','f',speed);
   }
 
-void left(char speed){
-  move('l','f');
-  move('r','b');
+void left(char speed = one){
+  move('l','f',speed);
+  move('r','b',zero);
   }
 
-void forward(char speed){
-move('l','f');
-move('r','f');  
+void forward(char speed = one){
+move('l','f',speed);
+move('r','f',speed);
   }
 //left motor: l
 //  in1 back b
@@ -85,7 +87,9 @@ move('r','f');
 //  in4 forward f
 //  out3 => +ve
 //  out4 => -ve
-void move(char motor,char dir,char speed){
+//  left -> l
+//  right -> r
+void move(char motor,char dir,char speed = zero){
   if(motor == 'l'){
     if(dir == 'b'){
       analogWrite(in1,0);
