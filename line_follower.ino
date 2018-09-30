@@ -1,8 +1,10 @@
 //l298n pins (pwm)
 #define in1 3
-#define in2 5
-#define in3 6
-#define in4 9
+#define in2 4
+#define ena 5
+#define enb 6
+#define in3 7
+#define in4 8
 //speed values
 #define zero 0
 #define one 51
@@ -11,25 +13,27 @@
 #define four 51*4
 #define five 51*5
 //sensors bins
-#define front_sen 8
+#define front_sen 9
 #define middle_sen 10
-#define left_sen 12
-#define right_sen 13
+#define left_sen 11
+#define right_sen 12
 //loop variables
 int lp = 0;
 int curcase,read_front,read_middle,read_left,read_right;
 
 void setup() {
   //l298n pins
+  pinMode(ena,1);  
   pinMode(in1,1);  
   pinMode(in2,1);
   pinMode(in3,1);
   pinMode(in4,1);
+  pinMode(enb,1);
   //IR pins
   pinMode(8,0);
+  pinMode(9,0);
   pinMode(10,0);
-  pinMode(12,0);
-  pinMode(13,0);  
+  pinMode(11,0);  
   Serial.begin(9600);
 }
 
@@ -92,25 +96,31 @@ move('r','f',speed);
 void move(char motor,char dir,char speed = zero){
   if(motor == 'l'){
     if(dir == 'b'){
-      analogWrite(in1,0);
-      analogWrite(in2,speed);
+      digitalWrite(in1,0);
+      digitalWrite(in2,1);
+      analogWrite(ena,speed);
       }else if(dir == 'f'){
-              analogWrite(in1,speed);
-              analogWrite(in2,0);
+              digitalWrite(in1,1);
+              digitalWrite(in2,0);
+              analogWrite(ena,speed);
         }else if(dir == 's'){//stop
-          analogWrite(in1,0); 
-          analogWrite(in2,0);  
+          digitalWrite(in1,0); 
+          digitalWrite(in2,0);
+          analogWrite(ena,speed);
           }
     }else{
       if(dir == 'b'){
-        analogWrite(in3,0);
-        analogWrite(in4,speed);
+        digitalWrite(in3,0);
+        digitalWrite(in4,1);
+        analogWrite(enb,speed);
         }else if(dir == 'f'){
-          analogWrite(in3,speed);
-          analogWrite(in4,0);
+          digitalWrite(in3,1);
+          digitalWrite(in4,0);
+          analogWrite(enb,speed);
           }else if(dir == 's'){//stop
-            analogWrite(in3,0);
-            analogWrite(in4,0); 
+            digitalWrite(in3,0);
+            digitalWrite(in4,0);
+            analogWrite(enb,speed); 
             }
       }
   }
